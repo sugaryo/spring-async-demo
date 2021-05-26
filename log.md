@@ -6,7 +6,7 @@
 |----|--|
 |CorePoolSize|2|
 |MaxPoolSize|4|
-|QueueCapacity|0|
+|QueueCapacity|10|
 
 - Ubuntu で curl 15 連打
 
@@ -416,6 +416,93 @@ sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > too busy
 2021-05-18 22:11:32.240  INFO 11884 --- [         poor-2] sugaryo.demo.async.app.TaskModule        : ▲ task[21a2e357-3a88-4154-ac37-71aae58e2542] done.
 2021-05-18 22:11:32.666  INFO 11884 --- [         poor-3] sugaryo.demo.async.app.TaskModule        : ▲ task[4accec22-ce28-4b20-aed1-bf3775d913b4] done.
 2021-05-18 22:11:32.969  INFO 11884 --- [         poor-4] sugaryo.demo.async.app.TaskModule        : ▲ task[09914549-befa-49d2-b3f2-e51c45fed80e] done.
+```
+
+## core=max設定
+
+|poor|設定値|
+|----|--|
+|CorePoolSize|10|
+|MaxPoolSize|10|
+|QueueCapacity|5|
+
+- curl 連打
+
+```log
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > e2b5e9a0-5bf4-4104-ac92-65a784816ccb
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > 73776e51-8c23-43e7-b1b9-0c4e2a47ca64
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > 378e08f6-b3b7-4101-ab6b-1dc83431c994
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > e023ec02-35b7-4a17-9843-15883a2b1641
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > 14ea95e4-b3ad-487f-bcca-481ea92166b2
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > cf0ca4ce-6fee-43ec-bff1-d2f5deec570e
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > 2c75364d-5f96-4199-a333-c9d31ed8400e
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > d7a2e9ba-e46f-410b-af9e-299020f88f22
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > ad69b9fd-5880-4d5f-9236-bc019dc570e6
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > ddabf873-77d8-4c4d-922c-c1d45bbf8893
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > bdb10103-5615-48a8-875d-bf955c426d39
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > f6aca0cf-78c8-4bc3-a857-67a5c526b91f
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > 2935eb77-008e-4bf6-9edb-5091b6106f61
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > 6e3fe53b-b7c2-4917-8c70-4c0f2e0c9528
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > cb2c10f3-1610-45f0-803d-af04b695a4d1
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > too busy
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > too busy
+sugaryo@DESKTOP-555E2PN:~$ curl -XPOST 192.168.192.1:8899/api/task/do > too busy
+```
+
+- SpringBootApplication側 の実行ログ
+
+```log
+2021-05-26 10:22:47.833  INFO 4832 --- [nio-8899-exec-4] sugaryo.demo.async.app.TaskController    : ■ task[e2b5e9a0-5bf4-4104-ac92-65a784816ccb] requested.
+2021-05-26 10:22:47.834  INFO 4832 --- [        pool4-4] sugaryo.demo.async.app.TaskModule        : ▼ task[e2b5e9a0-5bf4-4104-ac92-65a784816ccb] doing.
+2021-05-26 10:22:49.025  INFO 4832 --- [nio-8899-exec-5] sugaryo.demo.async.app.TaskController    : ■ task[73776e51-8c23-43e7-b1b9-0c4e2a47ca64] requested.
+2021-05-26 10:22:49.026  INFO 4832 --- [        pool4-5] sugaryo.demo.async.app.TaskModule        : ▼ task[73776e51-8c23-43e7-b1b9-0c4e2a47ca64] doing.
+2021-05-26 10:22:49.328  INFO 4832 --- [nio-8899-exec-7] sugaryo.demo.async.app.TaskController    : ■ task[378e08f6-b3b7-4101-ab6b-1dc83431c994] requested.
+2021-05-26 10:22:49.329  INFO 4832 --- [        pool4-6] sugaryo.demo.async.app.TaskModule        : ▼ task[378e08f6-b3b7-4101-ab6b-1dc83431c994] doing.
+2021-05-26 10:22:49.583  INFO 4832 --- [nio-8899-exec-8] sugaryo.demo.async.app.TaskController    : ■ task[e023ec02-35b7-4a17-9843-15883a2b1641] requested.
+2021-05-26 10:22:49.584  INFO 4832 --- [        pool4-7] sugaryo.demo.async.app.TaskModule        : ▼ task[e023ec02-35b7-4a17-9843-15883a2b1641] doing.
+2021-05-26 10:22:49.822  INFO 4832 --- [nio-8899-exec-9] sugaryo.demo.async.app.TaskController    : ■ task[14ea95e4-b3ad-487f-bcca-481ea92166b2] requested.
+2021-05-26 10:22:49.823  INFO 4832 --- [        pool4-8] sugaryo.demo.async.app.TaskModule        : ▼ task[14ea95e4-b3ad-487f-bcca-481ea92166b2] doing.
+2021-05-26 10:22:50.056  INFO 4832 --- [nio-8899-exec-1] sugaryo.demo.async.app.TaskController    : ■ task[cf0ca4ce-6fee-43ec-bff1-d2f5deec570e] requested.
+2021-05-26 10:22:50.057  INFO 4832 --- [        pool4-9] sugaryo.demo.async.app.TaskModule        : ▼ task[cf0ca4ce-6fee-43ec-bff1-d2f5deec570e] doing.
+2021-05-26 10:22:50.334  INFO 4832 --- [nio-8899-exec-2] sugaryo.demo.async.app.TaskController    : ■ task[2c75364d-5f96-4199-a333-c9d31ed8400e] requested.
+2021-05-26 10:22:50.335  INFO 4832 --- [       pool4-10] sugaryo.demo.async.app.TaskModule        : ▼ task[2c75364d-5f96-4199-a333-c9d31ed8400e] doing.
+2021-05-26 10:22:50.552  INFO 4832 --- [nio-8899-exec-3] sugaryo.demo.async.app.TaskController    : ■ task[d7a2e9ba-e46f-410b-af9e-299020f88f22] requested.
+2021-05-26 10:22:50.552  INFO 4832 --- [        pool4-1] sugaryo.demo.async.app.TaskModule        : ▼ task[d7a2e9ba-e46f-410b-af9e-299020f88f22] doing.
+2021-05-26 10:22:50.816  INFO 4832 --- [nio-8899-exec-4] sugaryo.demo.async.app.TaskController    : ■ task[ad69b9fd-5880-4d5f-9236-bc019dc570e6] requested.
+2021-05-26 10:22:50.817  INFO 4832 --- [        pool4-2] sugaryo.demo.async.app.TaskModule        : ▼ task[ad69b9fd-5880-4d5f-9236-bc019dc570e6] doing.
+2021-05-26 10:22:51.065  INFO 4832 --- [nio-8899-exec-6] sugaryo.demo.async.app.TaskController    : ■ task[ddabf873-77d8-4c4d-922c-c1d45bbf8893] requested.
+2021-05-26 10:22:51.065  INFO 4832 --- [        pool4-3] sugaryo.demo.async.app.TaskModule        : ▼ task[ddabf873-77d8-4c4d-922c-c1d45bbf8893] doing.
+2021-05-26 10:22:51.282  INFO 4832 --- [nio-8899-exec-7] sugaryo.demo.async.app.TaskController    : ■ task[bdb10103-5615-48a8-875d-bf955c426d39] requested.
+2021-05-26 10:22:51.559  INFO 4832 --- [nio-8899-exec-9] sugaryo.demo.async.app.TaskController    : ■ task[f6aca0cf-78c8-4bc3-a857-67a5c526b91f] requested.
+2021-05-26 10:22:51.823  INFO 4832 --- [io-8899-exec-10] sugaryo.demo.async.app.TaskController    : ■ task[2935eb77-008e-4bf6-9edb-5091b6106f61] requested.
+2021-05-26 10:22:52.072  INFO 4832 --- [nio-8899-exec-1] sugaryo.demo.async.app.TaskController    : ■ task[6e3fe53b-b7c2-4917-8c70-4c0f2e0c9528] requested.
+2021-05-26 10:22:52.310  INFO 4832 --- [nio-8899-exec-3] sugaryo.demo.async.app.TaskController    : ■ task[cb2c10f3-1610-45f0-803d-af04b695a4d1] requested.
+2021-05-26 10:22:52.608  INFO 4832 --- [nio-8899-exec-4] sugaryo.demo.async.app.TaskController    : ■ task[3582aee8-89a2-4251-a888-e469978158fb] requested.
+2021-05-26 10:22:52.615  WARN 4832 --- [nio-8899-exec-4] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.core.task.TaskRejectedException: Executor [java.util.concurrent.ThreadPoolExecutor@4294cce6[Running, pool size = 10, active threads = 10, queued tasks = 5, completed tasks = 3]] did not accept task: org.springframework.aop.interceptor.AsyncExecutionInterceptor$$Lambda$715/0x0000000800493fc8@7939c96e]
+2021-05-26 10:22:52.888  INFO 4832 --- [nio-8899-exec-5] sugaryo.demo.async.app.TaskController    : ■ task[eedae171-e2cc-4e52-804c-b25b7d557975] requested.
+2021-05-26 10:22:52.890  WARN 4832 --- [nio-8899-exec-5] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.core.task.TaskRejectedException: Executor [java.util.concurrent.ThreadPoolExecutor@4294cce6[Running, pool size = 10, active threads = 10, queued tasks = 5, completed tasks = 3]] did not accept task: org.springframework.aop.interceptor.AsyncExecutionInterceptor$$Lambda$715/0x0000000800493fc8@21020994]
+2021-05-26 10:22:53.208  INFO 4832 --- [nio-8899-exec-6] sugaryo.demo.async.app.TaskController    : ■ task[ef3deb04-26b9-43ce-8935-0bd4c250ecd3] requested.
+2021-05-26 10:22:53.210  WARN 4832 --- [nio-8899-exec-6] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.core.task.TaskRejectedException: Executor [java.util.concurrent.ThreadPoolExecutor@4294cce6[Running, pool size = 10, active threads = 10, queued tasks = 5, completed tasks = 3]] did not accept task: org.springframework.aop.interceptor.AsyncExecutionInterceptor$$Lambda$715/0x0000000800493fc8@1bdfc6fc]
+2021-05-26 10:22:57.835  INFO 4832 --- [        pool4-4] sugaryo.demo.async.app.TaskModule        : ▲ task[e2b5e9a0-5bf4-4104-ac92-65a784816ccb] done.
+2021-05-26 10:22:57.836  INFO 4832 --- [        pool4-4] sugaryo.demo.async.app.TaskModule        : ▼ task[bdb10103-5615-48a8-875d-bf955c426d39] doing.
+2021-05-26 10:22:59.029  INFO 4832 --- [        pool4-5] sugaryo.demo.async.app.TaskModule        : ▲ task[73776e51-8c23-43e7-b1b9-0c4e2a47ca64] done.
+2021-05-26 10:22:59.030  INFO 4832 --- [        pool4-5] sugaryo.demo.async.app.TaskModule        : ▼ task[f6aca0cf-78c8-4bc3-a857-67a5c526b91f] doing.
+2021-05-26 10:22:59.344  INFO 4832 --- [        pool4-6] sugaryo.demo.async.app.TaskModule        : ▲ task[378e08f6-b3b7-4101-ab6b-1dc83431c994] done.
+2021-05-26 10:22:59.344  INFO 4832 --- [        pool4-6] sugaryo.demo.async.app.TaskModule        : ▼ task[2935eb77-008e-4bf6-9edb-5091b6106f61] doing.
+2021-05-26 10:22:59.593  INFO 4832 --- [        pool4-7] sugaryo.demo.async.app.TaskModule        : ▲ task[e023ec02-35b7-4a17-9843-15883a2b1641] done.
+2021-05-26 10:22:59.594  INFO 4832 --- [        pool4-7] sugaryo.demo.async.app.TaskModule        : ▼ task[6e3fe53b-b7c2-4917-8c70-4c0f2e0c9528] doing.
+2021-05-26 10:22:59.829  INFO 4832 --- [        pool4-8] sugaryo.demo.async.app.TaskModule        : ▲ task[14ea95e4-b3ad-487f-bcca-481ea92166b2] done.
+2021-05-26 10:22:59.829  INFO 4832 --- [        pool4-8] sugaryo.demo.async.app.TaskModule        : ▼ task[cb2c10f3-1610-45f0-803d-af04b695a4d1] doing.
+2021-05-26 10:23:00.065  INFO 4832 --- [        pool4-9] sugaryo.demo.async.app.TaskModule        : ▲ task[cf0ca4ce-6fee-43ec-bff1-d2f5deec570e] done.
+2021-05-26 10:23:00.344  INFO 4832 --- [       pool4-10] sugaryo.demo.async.app.TaskModule        : ▲ task[2c75364d-5f96-4199-a333-c9d31ed8400e] done.
+2021-05-26 10:23:00.565  INFO 4832 --- [        pool4-1] sugaryo.demo.async.app.TaskModule        : ▲ task[d7a2e9ba-e46f-410b-af9e-299020f88f22] done.
+2021-05-26 10:23:00.819  INFO 4832 --- [        pool4-2] sugaryo.demo.async.app.TaskModule        : ▲ task[ad69b9fd-5880-4d5f-9236-bc019dc570e6] done.
+2021-05-26 10:23:01.070  INFO 4832 --- [        pool4-3] sugaryo.demo.async.app.TaskModule        : ▲ task[ddabf873-77d8-4c4d-922c-c1d45bbf8893] done.
+2021-05-26 10:23:07.837  INFO 4832 --- [        pool4-4] sugaryo.demo.async.app.TaskModule        : ▲ task[bdb10103-5615-48a8-875d-bf955c426d39] done.
+2021-05-26 10:23:09.033  INFO 4832 --- [        pool4-5] sugaryo.demo.async.app.TaskModule        : ▲ task[f6aca0cf-78c8-4bc3-a857-67a5c526b91f] done.
+2021-05-26 10:23:09.347  INFO 4832 --- [        pool4-6] sugaryo.demo.async.app.TaskModule        : ▲ task[2935eb77-008e-4bf6-9edb-5091b6106f61] done.
+2021-05-26 10:23:09.598  INFO 4832 --- [        pool4-7] sugaryo.demo.async.app.TaskModule        : ▲ task[6e3fe53b-b7c2-4917-8c70-4c0f2e0c9528] done.
+2021-05-26 10:23:09.834  INFO 4832 --- [        pool4-8] sugaryo.demo.async.app.TaskModule        : ▲ task[cb2c10f3-1610-45f0-803d-af04b695a4d1] done.
 ```
 
 ## 参考文献
