@@ -62,6 +62,19 @@ public class AsyncConfig {
     
     @Primary
     @Bean
+    public TaskExecutor threadpool4() {
+    	
+    	var executor = new ThreadPoolTaskExecutor();
+    	// core = max 
+    	executor.setCorePoolSize( 10 );
+    	executor.setMaxPoolSize( 10 );
+    	executor.setQueueCapacity( 5 );
+    	executor.setThreadNamePrefix( "pool4-" );
+    	
+    	return executor;
+    }
+    
+    @Bean
     public TaskExecutor poor() {
     	
     	var executor = new ThreadPoolTaskExecutor();
